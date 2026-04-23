@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Priority Planner</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="planner">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Priority Planner</p>
+            <h1>把固定日程、精力和优先事项排到同一天里</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" id="saveButton" title="保存到本机" aria-label="保存到本机">
+              <span aria-hidden="true">▣</span>
+            </button>
+            <button class="icon-button" id="resetButton" title="重置示例" aria-label="重置示例">
+              <span aria-hidden="true">↺</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="workspace">
+          <aside class="controls">
+            <section class="panel">
+              <div class="panel-header">
+                <h2>固定日程</h2>
+                <label class="file-button" for="scheduleFile" title="上传 CSV 或文本" aria-label="上传 CSV 或文本">
+                  <span aria-hidden="true">⇧</span>
+                  <input id="scheduleFile" type="file" accept=".csv,.txt,.ics" />
+                </label>
+              </div>
+              <textarea id="fixedInput" spellcheck="false"></textarea>
+              <p class="hint">支持：09:00-10:15 课程名，或 CSV: start,end,title</p>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <h2>生活边界</h2>
+              </div>
+              <div class="constraint-grid">
+                <label>
+                  <span>起床</span>
+                  <input id="dayStart" type="time" value="07:30" />
+                </label>
+                <label>
+                  <span>睡前</span>
+                  <input id="dayEnd" type="time" value="23:00" />
+                </label>
+                <label>
+                  <span>缓冲</span>
+                  <input id="bufferMinutes" type="number" min="0" max="60" step="5" value="10" />
+                </label>
+                <label>
+                  <span>最短块</span>
+                  <input id="defaultBlock" type="number" min="15" max="180" step="5" value="45" />
+                </label>
+              </div>
+            </section>
+
+            <section class="panel priority-panel">
+              <div class="panel-header">
+                <h2>优先事项</h2>
+                <button class="icon-button" id="addPriority" title="新增优先事项" aria-label="新增优先事项">
+                  <span aria-hidden="true">＋</span>
+                </button>
+              </div>
+              <div id="priorityList" class="priority-list"></div>
+            </section>
+          </aside>
+
+          <section class="schedule-area">
+            <div class="toolbar">
+              <div class="segmented" role="group" aria-label="视图">
+                <button data-view="day" class="active">今日</button>
+                <button data-view="balance">平衡</button>
+              </div>
+              <div class="toolbar-actions">
+                <button id="generateButton" class="primary-button">
+                  <span aria-hidden="true">◎</span>
+                  生成
+                </button>
+                <button id="exportButton" class="secondary-button">
+                  <span aria-hidden="true">↓</span>
+                  导出
+                </button>
+              </div>
+            </div>
+
+            <div id="dayView" class="day-view">
+              <div class="timeline-wrap">
+                <div class="time-ruler" id="timeRuler"></div>
+                <div class="timeline" id="timeline" aria-live="polite"></div>
+              </div>
+              <div class="insight-strip" id="insights"></div>
+            </div>
+
+            <div id="balanceView" class="balance-view hidden">
+              <canvas id="balanceCanvas" width="900" height="360" aria-label="优先事项时间分配图"></canvas>
+              <div id="balanceLegend" class="legend"></div>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="editDialog">
+      <form method="dialog" class="dialog-form">
+        <h2>调整时间块</h2>
+        <input type="hidden" id="editId" />
+        <label>
+          <span>名称</span>
+          <input id="editTitle" type="text" />
+        </label>
+        <div class="dialog-grid">
+          <label>
+            <span>开始</span>
+            <input id="editStart" type="time" />
+          </label>
+          <label>
+            <span>结束</span>
+            <input id="editEnd" type="time" />
+          </label>
+        </div>
+        <menu>
+          <button value="cancel" class="secondary-button">取消</button>
+          <button id="deleteBlock" value="delete" class="danger-button">删除</button>
+          <button id="applyEdit" value="default" class="primary-button">应用</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
